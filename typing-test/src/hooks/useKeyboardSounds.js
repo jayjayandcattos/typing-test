@@ -16,7 +16,6 @@ export const useKeyboardSounds = () => {
         enterSound.current.volume = volume / 100
     }, [])
 
-    // Update volume when it changes
     useEffect(() => {
         if (keypressSound.current) keypressSound.current.volume = volume / 100
         if (spaceSound.current) spaceSound.current.volume = volume / 100
@@ -38,12 +37,10 @@ export const useKeyboardSounds = () => {
         }
         
         if (sound) {
-            sound.currentTime = 0 // Reset to start for rapid keypresses
+            sound.currentTime = 0
             sound.play().catch(err => console.log('Error playing sound:', err))
         }
     }
 
     return { playSound, setVolume }
 }
-
-
