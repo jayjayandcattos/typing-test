@@ -1,0 +1,31 @@
+.input-box-container {
+  margin-bottom: 2rem;
+}
+
+.input-box {
+  width: 100%;
+  max-width: 500px;
+  padding: 1rem 1.5rem;
+  font-size: 1.5rem;
+  background-color: #222;
+  border: 2px solid #333;
+  border-radius: 8px;
+  color: #fff;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-box:focus {
+  border-color: #00ffff;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+.input-box:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.input-box::placeholder {
+  color: #666;
+}
+

@@ -1,0 +1,19 @@
+.word-display {
+  margin-bottom: 3rem;
+}
+
+.word-text {
+  font-size: 3rem;
+  font-weight: 600;
+  color: #00ffff;
+  text-align: center;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+}
+
+@media (max-width: 768px) {
+  .word-text {
+    font-size: 2rem;
+  }
+}
+
