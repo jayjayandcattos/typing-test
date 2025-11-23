@@ -1,0 +1,439 @@
+/* Background keycaps scattered around */
+.background-keycaps {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.background-keycap {
+  position: absolute;
+  left: var(--x-pos);
+  top: var(--y-pos);
+  width: 180px; /* WIDER! */
+  height: 140px;
+  transform: scale(var(--size-scale)) rotateX(var(--rotate-x)) rotateY(var(--rotate-y)) rotateZ(var(--rotate-z));
+  opacity: 0.5;
+  animation: floatBackground 8s ease-in-out infinite;
+  animation-delay: var(--anim-delay);
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+@keyframes floatBackground {
+  0%, 100% {
+    transform: scale(var(--size-scale)) rotateX(var(--rotate-x)) rotateY(var(--rotate-y)) rotateZ(var(--rotate-z)) translateY(0);
+  }
+  50% {
+    transform: scale(var(--size-scale)) rotateX(var(--rotate-x)) rotateY(var(--rotate-y)) rotateZ(var(--rotate-z)) translateY(-20px);
+  }
+}
+
+/* Main floating keycap container */
+.floating-keycap-container {
+  position: fixed;
+  right: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  pointer-events: none;
+}
+
+.floating-keycap {
+  position: relative;
+  width: 180px; /* WIDER! */
+  height: 140px;
+  animation: floatAnimation 6s ease-in-out infinite;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+/* ALL KEYCAPS SHARE THIS STYLING */
+.keycap-body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
+}
+
+/* Main keycap specific rotation */
+.floating-keycap .keycap-body {
+  transform: rotateX(-20deg) rotateY(25deg);
+  animation: rotateKeycap 8s linear infinite;
+}
+
+.floating-keycap.active .keycap-body {
+  transform: rotateX(-20deg) rotateY(25deg) translateY(-15px) scale(1.05);
+}
+
+/* Keycap top surface - THICK AND PREMIUM */
+.keycap-top-surface {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, #3a3a5e 0%, #2a2a4e 50%, #1a1a3e 100%);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    inset 0 3px 6px rgba(255, 255, 255, 0.15),
+    inset 0 -3px 8px rgba(0, 0, 0, 0.6),
+    0 0 0 3px rgba(255, 255, 255, 0.08);
+  transform: translateZ(40px);
+  border: 2px solid rgba(255, 255, 255, 0.12);
+}
+
+.keycap-letter {
+  font-size: 56px;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 
+    0 0 30px hsl(var(--rgb-hue), 100%, 60%),
+    0 0 50px hsl(var(--rgb-hue), 100%, 50%),
+    0 0 70px hsl(var(--rgb-hue), 80%, 40%),
+    0 3px 6px rgba(0, 0, 0, 0.9);
+  font-family: 'Arial Black', sans-serif;
+  letter-spacing: -2px;
+}
+
+/* Keycap sides - THICK 40px FOR MAXIMUM VOLUME */
+.keycap-side {
+  position: absolute;
+  background: linear-gradient(145deg, #2a2a4e 0%, #1a1a3e 50%, #0f0f2a 100%);
+}
+
+.keycap-side-front {
+  width: 100%;
+  height: 40px;
+  bottom: -40px;
+  left: 0;
+  transform: rotateX(-90deg);
+  transform-origin: top;
+  box-shadow: 
+    inset 0 0 30px hsl(var(--rgb-hue), 100%, 35%),
+    inset 0 -10px 20px hsl(var(--rgb-hue), 90%, 25%),
+    0 0 40px hsl(var(--rgb-hue), 80%, 40%);
+  background: linear-gradient(to bottom, 
+    hsl(var(--rgb-hue), 70%, 35%) 0%,
+    hsl(var(--rgb-hue), 60%, 25%) 40%,
+    hsl(var(--rgb-hue), 50%, 20%) 70%,
+    #0f0f1a 100%
+  );
+  border-radius: 0 0 4px 4px;
+}
+
+.keycap-side-right {
+  width: 40px;
+  height: 100%;
+  right: -40px;
+  top: 0;
+  transform: rotateY(90deg);
+  transform-origin: left;
+  background: linear-gradient(to right,
+    hsl(var(--rgb-hue), 60%, 30%) 0%,
+    hsl(var(--rgb-hue), 50%, 20%) 50%,
+    #0f0f1a 100%
+  );
+  box-shadow: inset 0 0 20px hsl(var(--rgb-hue), 80%, 35%);
+}
+
+.keycap-side-back {
+  width: 100%;
+  height: 40px;
+  top: -40px;
+  left: 0;
+  transform: rotateX(90deg);
+  transform-origin: bottom;
+  background: #0a0a16;
+  border-radius: 4px 4px 0 0;
+}
+
+.keycap-side-left {
+  width: 40px;
+  height: 100%;
+  left: -40px;
+  top: 0;
+  transform: rotateY(-90deg);
+  transform-origin: right;
+  background: linear-gradient(to left,
+    hsl(var(--rgb-hue), 60%, 30%) 0%,
+    hsl(var(--rgb-hue), 50%, 20%) 50%,
+    #0f0f1a 100%
+  );
+  box-shadow: inset 0 0 20px hsl(var(--rgb-hue), 80%, 35%);
+}
+
+/* Keycap bottom */
+.keycap-bottom {
+  position: absolute;
+  bottom: -40px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, #1a1a2e 0%, #0a0a12 100%);
+  border-radius: 12px;
+  transform: translateZ(-5px);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+/* Mechanical Switch - ALL KEYCAPS HAVE THIS */
+.mechanical-switch {
+  position: absolute;
+  bottom: -70px;
+  left: 50%;
+  transform: translateX(-50%) translateZ(-10px);
+  width: 60px;
+  height: 30px;
+  transform-style: preserve-3d;
+}
+
+.switch-housing {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%);
+  border-radius: 4px;
+  box-shadow: 
+    inset 0 2px 4px rgba(255, 255, 255, 0.1),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.8),
+    0 0 15px hsl(var(--rgb-hue), 70%, 30%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.switch-stem {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(145deg, 
+    hsl(var(--rgb-hue), 50%, 25%) 0%,
+    hsl(var(--rgb-hue), 40%, 15%) 100%
+  );
+  border-radius: 2px;
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.6),
+    0 0 10px hsl(var(--rgb-hue), 80%, 40%);
+  
+  /* Cross pattern for Cherry MX style */
+  background-image: 
+    linear-gradient(to right, transparent 40%, rgba(0,0,0,0.5) 40%, rgba(0,0,0,0.5) 60%, transparent 60%),
+    linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.5) 40%, rgba(0,0,0,0.5) 60%, transparent 60%);
+}
+
+/* Enhanced underglow - ALL KEYCAPS */
+.keycap-underglow {
+  position: absolute;
+  bottom: -90px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180%;
+  height: 80px;
+  background: radial-gradient(
+    ellipse at center,
+    hsl(var(--rgb-hue), 100%, 50%) 0%,
+    hsl(var(--rgb-hue), 90%, 45%) 20%,
+    hsl(var(--rgb-hue), 80%, 35%) 40%,
+    transparent 75%
+  );
+  border-radius: 50%;
+  filter: blur(30px);
+  opacity: 0.9;
+  animation: glowPulse 2.5s ease-in-out infinite;
+}
+
+.floating-keycap.active .keycap-underglow {
+  opacity: 1;
+  filter: blur(40px);
+  animation: glowPulseActive 0.4s ease-out;
+}
+
+.keycap-reflection {
+  position: absolute;
+  top: 15%;
+  left: 15%;
+  width: 35%;
+  height: 25%;
+  background: radial-gradient(
+    ellipse at top left,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.2) 40%,
+    transparent 100%
+  );
+  border-radius: 50%;
+  transform: translateZ(41px) rotate(-20deg);
+  pointer-events: none;
+  filter: blur(3px);
+}
+
+/* Animations */
+@keyframes floatAnimation {
+  0%, 100% {
+    transform: translateY(-50%) translateX(0) translateZ(0);
+  }
+  50% {
+    transform: translateY(-55%) translateX(0) translateZ(15px);
+  }
+}
+
+@keyframes rotateKeycap {
+  0% {
+    transform: rotateX(-20deg) rotateY(25deg);
+  }
+  50% {
+    transform: rotateX(-20deg) rotateY(35deg);
+  }
+  100% {
+    transform: rotateX(-20deg) rotateY(25deg);
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    opacity: 0.7;
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.15);
+  }
+}
+
+@keyframes glowPulseActive {
+  0% {
+    opacity: 0.9;
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.5);
+  }
+  100% {
+    opacity: 0.9;
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .floating-keycap-container {
+    right: 3%;
+  }
+  
+  .floating-keycap,
+  .background-keycap {
+    width: 140px; /* Wider */
+    height: 110px;
+  }
+  
+  .keycap-letter {
+    font-size: 44px;
+  }
+
+  .keycap-side-front,
+  .keycap-side-back {
+    height: 30px;
+  }
+
+  .keycap-side-right,
+  .keycap-side-left {
+    width: 30px;
+  }
+
+  .mechanical-switch {
+    bottom: -55px;
+    width: 50px;
+    height: 25px;
+  }
+
+  .switch-stem {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .background-keycaps {
+    display: none;
+  }
+
+  .floating-keycap-container {
+    position: absolute;
+    right: auto;
+    left: 50%;
+    top: auto;
+    bottom: 40px;
+    transform: translateX(-50%);
+  }
+  
+  .floating-keycap {
+    width: 110px; /* Wider */
+    height: 90px;
+  }
+  
+  .keycap-letter {
+    font-size: 36px;
+  }
+  
+  .keycap-side-front,
+  .keycap-side-back {
+    height: 25px;
+  }
+  
+  .keycap-side-right,
+  .keycap-side-left {
+    width: 25px;
+  }
+
+  .mechanical-switch {
+    bottom: -45px;
+    width: 40px;
+    height: 20px;
+  }
+
+  .switch-stem {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .floating-keycap {
+    width: 90px; /* Wider */
+    height: 70px;
+  }
+  
+  .keycap-letter {
+    font-size: 28px;
+  }
+  
+  .keycap-side-front,
+  .keycap-side-back {
+    height: 18px;
+  }
+  
+  .keycap-side-right,
+  .keycap-side-left {
+    width: 18px;
+  }
+
+  .mechanical-switch {
+    bottom: -35px;
+    width: 30px;
+    height: 15px;
+  }
+
+  .switch-stem {
+    width: 10px;
+    height: 10px;
+  }
+}

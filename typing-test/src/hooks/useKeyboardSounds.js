@@ -1,19 +1,27 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 
 export const useKeyboardSounds = () => {
     const keypressSound = useRef(null)
     const spaceSound = useRef(null)
     const enterSound = useRef(null)
+    const [volume, setVolume] = useState(10)
 
     useEffect(() => {   
         keypressSound.current = new Audio('/sounds/keypress.mp3')
         spaceSound.current = new Audio('/sounds/space.mp3')
         enterSound.current = new Audio('/sounds/enter.mp3')
 
-        keypressSound.current.volume = 0.1
-        spaceSound.current.volume = 0.1
-        enterSound.current.volume = 0.1
+        keypressSound.current.volume = volume / 100
+        spaceSound.current.volume = volume / 100
+        enterSound.current.volume = volume / 100
     }, [])
+
+    // Update volume when it changes
+    useEffect(() => {
+        if (keypressSound.current) keypressSound.current.volume = volume / 100
+        if (spaceSound.current) spaceSound.current.volume = volume / 100
+        if (enterSound.current) enterSound.current.volume = volume / 100
+    }, [volume])
 
     const playSound = (type = 'keypress') => {
         let sound
@@ -28,14 +36,14 @@ export const useKeyboardSounds = () => {
             default:
                 sound = keypressSound.current
         }
-        sound?.play()
+        
+        if (sound) {
+            sound.currentTime = 0 // Reset to start for rapid keypresses
+            sound.play().catch(err => console.log('Error playing sound:', err))
+        }
     }
 
-if (sound) {
-        sound.currentTime = 0 // mag rereset sa simula
-        sound.play().catch(err => console.log('Error playing sound:', err))
-    } 
+    return { playSound, setVolume }
 }
 
-return { playSound }
 

@@ -16,6 +16,19 @@ function StartScreen({ onStart }) {
           <p>Press <kbd>Enter</kbd> or <kbd>Space</kbd> to submit each word</p>
         </div>
       </div>
+      <footer className="start-footer">
+        <p>
+          made by{' '}
+          <a 
+            href="https://github.com/jayjayandcattos" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="github-link"
+          >
+            jayjayandcattos
+          </a>
+        </p>
+      </footer>
     </div>
   )
 }

@@ -5,6 +5,8 @@ import InputBox from './components/InputBox'
 import Timer from './components/Timer'
 import Results from './components/Results'
 import RestartButton from './components/RestartButton'
+import VolumeControl from './components/VolumeControl'
+import MechanicalKeyboard from './components/MechanicalKeyboard'
 import { useKeyboardSounds } from './hooks/useKeyboardSounds'
 import './App.css'
 
@@ -17,8 +19,13 @@ function App() {
   const [totalTypedAttempts, setTotalTypedAttempts] = useState(0)
   const [isRunning, setIsRunning] = useState(false)
   const [hasError, setHasError] = useState(false)
+  const [lastKey, setLastKey] = useState('')
 
-  const playSound = useKeyboardSounds()
+  const { playSound, setVolume } = useKeyboardSounds()
+
+  const handleVolumeChange = (newVolume) => {
+    setVolume(newVolume)
+  }
 
   const fetchWord = async () => {
     try {
@@ -75,7 +82,9 @@ function App() {
     if (gameState !== 'playing') return
 
     const value = e.target.value
+    const lastChar = value.slice(-1)
     setUserInput(value)
+    setLastKey(lastChar)
     playSound('keypress')
 
     if (!isRunning && value.length > 0) {
@@ -115,10 +124,12 @@ function App() {
 
     if (e.key === 'Enter') {
       e.preventDefault()
+      setLastKey('enter')
       playSound('enter')
       checkWord()
     } else if (e.key === ' ') {
       e.preventDefault()
+      setLastKey(' ')
       playSound('space')
       checkWord()
     }
@@ -133,6 +144,7 @@ function App() {
           <>
             <h1 className="app-title">Typing Speed Test</h1>
             <RestartButton onClick={handleRestart} variant="floating" />
+            <VolumeControl onVolumeChange={handleVolumeChange} initialVolume={10} />
             <Timer timeLeft={timeLeft} />
             <WordDisplay word={currentWord} />
             <InputBox
@@ -142,6 +154,7 @@ function App() {
               disabled={false}
               hasError={hasError}
             />
+            <MechanicalKeyboard lastKey={lastKey} />
             <div className="stats">
               <div className="stat-item">
                 <span className="stat-label">Correct:</span>
