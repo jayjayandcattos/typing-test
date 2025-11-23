@@ -1,18 +1,21 @@
 import { useState, useEffect } from 'react'
+import StartScreen from './components/StartScreen'
 import WordDisplay from './components/WordDisplay'
 import InputBox from './components/InputBox'
 import Timer from './components/Timer'
 import Results from './components/Results'
+import RestartButton from './components/RestartButton'
 import './App.css'
 
 function App() {
+  const [gameState, setGameState] = useState('idle') // 'idle', 'playing', 'finished'
   const [currentWord, setCurrentWord] = useState('')
   const [userInput, setUserInput] = useState('')
   const [timeLeft, setTimeLeft] = useState(30)
   const [correctCount, setCorrectCount] = useState(0)
   const [totalTypedAttempts, setTotalTypedAttempts] = useState(0)
   const [isRunning, setIsRunning] = useState(false)
-  const [gameOver, setGameOver] = useState(false)
+  const [hasError, setHasError] = useState(false)
 
   const fetchWord = async () => {
     try {
@@ -23,21 +26,22 @@ function App() {
       }
     } catch (error) {
       console.error('Error fetching word:', error)
-      
       setCurrentWord('error')
     }
   }
 
   useEffect(() => {
-    fetchWord()
-  }, [])
+    if (gameState === 'playing' && !currentWord) {
+      fetchWord()
+    }
+  }, [gameState, currentWord])
 
   useEffect(() => {
-    if (isRunning && timeLeft > 0 && !gameOver) {
+    if (isRunning && timeLeft > 0 && gameState === 'playing') {
       const timer = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
-            setGameOver(true)
+            setGameState('finished')
             setIsRunning(false)
             return 0
           }
@@ -47,10 +51,26 @@ function App() {
 
       return () => clearInterval(timer)
     }
-  }, [isRunning, timeLeft, gameOver])
+  }, [isRunning, timeLeft, gameState])
+
+  const handleStart = () => {
+    setGameState('playing')
+    fetchWord()
+  }
+
+  const handleRestart = () => {
+    setGameState('idle')
+    setCurrentWord('')
+    setUserInput('')
+    setTimeLeft(30)
+    setCorrectCount(0)
+    setTotalTypedAttempts(0)
+    setIsRunning(false)
+    setHasError(false)
+  }
 
   const handleInputChange = (e) => {
-    if (gameOver) return
+    if (gameState !== 'playing') return
     
     const value = e.target.value
     setUserInput(value)
@@ -59,10 +79,22 @@ function App() {
     if (!isRunning && value.length > 0) {
       setIsRunning(true)
     }
+
+    // Check for errors character by character
+    if (value.length > 0) {
+      const currentWordLower = currentWord.toLowerCase()
+      const valueLower = value.toLowerCase()
+      
+      // Check if current input doesn't match the beginning of the word
+      if (!currentWordLower.startsWith(valueLower)) {
+        setHasError(true)
+        setTimeout(() => setHasError(false), 400) // Clear error after animation
+      }
+    }
   }
 
   const checkWord = () => {
-    if (gameOver || !userInput.trim()) return
+    if (gameState !== 'playing' || !userInput.trim()) return
 
     const trimmedInput = userInput.trim().toLowerCase()
     const trimmedWord = currentWord.toLowerCase()
@@ -73,11 +105,15 @@ function App() {
       setCorrectCount((prev) => prev + 1)
       setUserInput('')
       fetchWord()
+    } else {
+      // Show error if word submission is wrong
+      setHasError(true)
+      setTimeout(() => setHasError(false), 400)
     }
   }
 
   const handleKeyDown = (e) => {
-    if (gameOver) return
+    if (gameState !== 'playing') return
 
     // Check word on Enter or Space
     if (e.key === 'Enter' || e.key === ' ') {
@@ -89,17 +125,22 @@ function App() {
   return (
     <div className="app">
       <div className="app-container">
-        <h1 className="app-title">Typing Speed Test</h1>
-        
-        {!gameOver ? (
+        {gameState === 'idle' && (
+          <StartScreen onStart={handleStart} />
+        )}
+
+        {gameState === 'playing' && (
           <>
+            <h1 className="app-title">Typing Speed Test</h1>
+            <RestartButton onClick={handleRestart} variant="floating" />
             <Timer timeLeft={timeLeft} />
             <WordDisplay word={currentWord} />
             <InputBox
               value={userInput}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              disabled={gameOver}
+              disabled={false}
+              hasError={hasError}
             />
             <div className="stats">
               <div className="stat-item">
@@ -112,10 +153,13 @@ function App() {
               </div>
             </div>
           </>
-        ) : (
+        )}
+
+        {gameState === 'finished' && (
           <Results 
             correctCount={correctCount} 
-            totalTypedAttempts={totalTypedAttempts} 
+            totalTypedAttempts={totalTypedAttempts}
+            onRestart={handleRestart}
           />
         )}
       </div>
