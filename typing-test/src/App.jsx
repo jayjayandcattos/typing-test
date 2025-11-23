@@ -5,10 +5,11 @@ import InputBox from './components/InputBox'
 import Timer from './components/Timer'
 import Results from './components/Results'
 import RestartButton from './components/RestartButton'
+import { useKeyboardSounds } from './hooks/useKeyboardSounds'
 import './App.css'
 
 function App() {
-  const [gameState, setGameState] = useState('idle') // 'idle', 'playing', 'finished'
+  const [gameState, setGameState] = useState('idle')
   const [currentWord, setCurrentWord] = useState('')
   const [userInput, setUserInput] = useState('')
   const [timeLeft, setTimeLeft] = useState(30)
@@ -16,6 +17,8 @@ function App() {
   const [totalTypedAttempts, setTotalTypedAttempts] = useState(0)
   const [isRunning, setIsRunning] = useState(false)
   const [hasError, setHasError] = useState(false)
+
+  const playSound = useKeyboardSounds()
 
   const fetchWord = async () => {
     try {
@@ -48,7 +51,6 @@ function App() {
           return prev - 1
         })
       }, 1000)
-
       return () => clearInterval(timer)
     }
   }, [isRunning, timeLeft, gameState])
@@ -71,24 +73,21 @@ function App() {
 
   const handleInputChange = (e) => {
     if (gameState !== 'playing') return
-    
+
     const value = e.target.value
     setUserInput(value)
+    playSound('keypress')
 
-    // Start timer on first input
     if (!isRunning && value.length > 0) {
       setIsRunning(true)
     }
 
-    // Check for errors character by character
     if (value.length > 0) {
       const currentWordLower = currentWord.toLowerCase()
       const valueLower = value.toLowerCase()
-      
-      // Check if current input doesn't match the beginning of the word
       if (!currentWordLower.startsWith(valueLower)) {
         setHasError(true)
-        setTimeout(() => setHasError(false), 400) // Clear error after animation
+        setTimeout(() => setHasError(false), 400)
       }
     }
   }
@@ -106,7 +105,6 @@ function App() {
       setUserInput('')
       fetchWord()
     } else {
-      // Show error if word submission is wrong
       setHasError(true)
       setTimeout(() => setHasError(false), 400)
     }
@@ -115,9 +113,13 @@ function App() {
   const handleKeyDown = (e) => {
     if (gameState !== 'playing') return
 
-    // Check word on Enter or Space
-    if (e.key === 'Enter' || e.key === ' ') {
+    if (e.key === 'Enter') {
       e.preventDefault()
+      playSound('enter')
+      checkWord()
+    } else if (e.key === ' ') {
+      e.preventDefault()
+      playSound('space')
       checkWord()
     }
   }
@@ -125,9 +127,7 @@ function App() {
   return (
     <div className="app">
       <div className="app-container">
-        {gameState === 'idle' && (
-          <StartScreen onStart={handleStart} />
-        )}
+        {gameState === 'idle' && <StartScreen onStart={handleStart} />}
 
         {gameState === 'playing' && (
           <>
@@ -156,8 +156,8 @@ function App() {
         )}
 
         {gameState === 'finished' && (
-          <Results 
-            correctCount={correctCount} 
+          <Results
+            correctCount={correctCount}
             totalTypedAttempts={totalTypedAttempts}
             onRestart={handleRestart}
           />
@@ -168,4 +168,3 @@ function App() {
 }
 
 export default App
-
